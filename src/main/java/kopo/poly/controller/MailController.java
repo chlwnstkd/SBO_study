@@ -136,7 +136,7 @@ public class MailController {
             mailService.insertMailInfo(pDTO);
 
             // 저장이 완료되면 사용자에게 보여줄 메시지
-            msg = "등록되었습니다.";
+            msg = "";
 
         } catch (Exception e) {
 
