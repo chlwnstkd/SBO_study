@@ -4,12 +4,20 @@
 <!-- JAVA와 연결할 Mapper 파일 설정 -->
 <mapper namespace="kopo.poly.persistance.mapper.IUserInfoMapper">
 
+    <!--  userId가 존재하는지 확인  -->
     <select id="getUserIdExists" parameterType="UserInfoDTO" resultType="UserInfoDTO">
         SELECT DECODE(COUNT(1), 0, 'N', 'Y') AS EXISTS_YN
         FROM USER_INFO
         WHERE USER_ID = #{userId}
     </select>
+
     <select id="getUserInfo" resultType="UserInfoDTO">
+        SELECT USER_ID, USER_NAME, PASSWORD, EMAIL, ADDR1, ADDR2,
+               REG_ID, REG_DT, CHG_ID, CHG_DT, USER_SEQ
+        FROM USER_INFO
+        WHERE USER_ID = #{userId}
+    </select>
+    <select id="getLoginInfo" resultType="UserInfoDTO">
         SELECT USER_ID, USER_NAME, PASSWORD, EMAIL, ADDR1, ADDR2,
                REG_ID, REG_DT, CHG_ID, CHG_DT, USER_SEQ
         FROM USER_INFO
@@ -29,6 +37,8 @@
         FROM USER_INFO
         WHERE EMAIL = #{email}
     </select>
+
+    <!--  회원 가입 정보를 DB에 저장  -->
     <insert id="insertUserInfo" parameterType="UserInfoDTO">
         INSERT INTO USER_INFO
         (
@@ -40,4 +50,12 @@
                       #{userId}, SYSDATE, #{userId}, SYSDATE, (SELECT NVL(MAX(A.USER_SEQ),0)+1 FROM USER_INFO A)
               )
     </insert>
+
+    <!--  로그인을 위해 아이디와 비밀번호가 일치하는지 확인하기  -->
+    <select id="getLogin" parameterType="UserInfoDTO" resultType="UserInfoDTO">
+        SELECT USER_ID, USER_NAME, EMAIL
+        FROM USER_INFO
+        WHERE USER_ID = #{userId}
+          AND PASSWORD = #{password}
+    </select>
 </mapper>

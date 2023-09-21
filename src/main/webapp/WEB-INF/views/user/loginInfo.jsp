@@ -3,7 +3,7 @@
 <%@ page import="kopo.poly.dto.UserInfoDTO" %>
 <%@ page import="kopo.poly.util.CmmUtil" %>
 <%
-    // NoticeController 함수에서 model 객체에 저장된 값 불러오기
+  // NoticeController 함수에서 model 객체에 저장된 값 불러오기
     UserInfoDTO rDTO = (UserInfoDTO) request.getAttribute("rDTO");
 %>
 <!DOCTYPE html>
@@ -34,7 +34,7 @@
     </script>
 </head>
 <body>
-<h2>공지사항 상세보기</h2>
+<h2>로그인 유저 상세보기</h2>
 <hr/>
 <br/>
 <div class="divTable minimalistBlack">
