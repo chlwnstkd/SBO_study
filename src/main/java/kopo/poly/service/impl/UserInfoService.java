@@ -165,4 +165,58 @@ public class UserInfoService implements IUserInfoService {
         log.info(this.getClass().getName() + ".insertUserInfo End!");
         return res;
     }
+
+    @Override
+    public UserInfoDTO searchUserIdOrPasswordProc(UserInfoDTO pDTO) throws Exception {
+        log.info(this.getClass().getName() + ".searchUserIdOrPasswordProc Start!");
+
+        UserInfoDTO rDTO = userInfoMapper.getUserId(pDTO);
+
+        log.info(this.getClass().getName() + ".searchUserIdOrPasswordProc End!");
+
+        return rDTO;
+    }
+
+    @Override
+    public int newPasswordProc(UserInfoDTO pDTO) throws Exception {
+        log.info(this.getClass().getName() + ".newPasswordProc Start!");
+
+        int success = userInfoMapper.updatePassword(pDTO);
+
+        log.info(this.getClass().getName() + ".newPasswordProc End!");
+
+        return success;
+    }
+    @Override
+    public UserInfoDTO searchEmail(UserInfoDTO pDTO) throws Exception {
+        log.info(this.getClass().getName() + ".emailAuth Start!");
+
+        UserInfoDTO rDTO = userInfoMapper.getEmailExists(pDTO);
+
+        String existsYn = CmmUtil.nvl(rDTO.getExistsYn());
+
+        log.info("existsYn : " + existsYn);
+
+        if (existsYn.equals("Y")) {
+            int authNumber = ThreadLocalRandom.current().nextInt(100000,1000000);
+
+            MailDTO dto = new MailDTO();
+
+            dto.setTitle("이메일 확인 인증번호 발송 메일");
+            dto.setContents("인증번호는 " + authNumber + " 입니다.");
+            dto.setToMail(EncryptUtil.decAES128CBC(CmmUtil.nvl(pDTO.getEmail())));
+
+            mailService.doSendMail(dto);
+
+            dto = null;
+
+            rDTO.setAuthNumber(authNumber);
+
+            log.info("authNumber : " + authNumber);
+        }
+
+        log.info(this.getClass().getName() + ".emailAuth End!");
+
+        return rDTO;
+    }
 }
