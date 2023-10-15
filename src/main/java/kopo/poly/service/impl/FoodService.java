@@ -26,7 +26,7 @@ import java.util.List;
 @Service
 public class FoodService implements IFoodService {
 
-    @Scheduled(cron = "* * 3 * * *")
+//    @Scheduled(cron = "* * 3 * * *")
     @Override
     public List<FoodDTO> toDayFood() throws Exception {
         log.info(this.getClass().getName() + ".toDayFood Start!");
