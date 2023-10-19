@@ -32,6 +32,7 @@ public class WeatherService implements IWeatherService {
 
         Elements elements = doc.select("div.section_center");
 
+        Iterator<Element> location = elements.select("strong.location_name").iterator();
         Iterator<Element> weatherTemp = elements.select("strong.current").iterator();
         Iterator<Element> weatherSummary = elements.select("span.weather").iterator();
 
@@ -41,20 +42,22 @@ public class WeatherService implements IWeatherService {
 
         pDTO = new WeatherDTO();
 
-        while (weatherTemp.hasNext()) {
-            String temp = CmmUtil.nvl(weatherTemp.next().text()).trim();
-            String summary = CmmUtil.nvl(weatherSummary.next().text()).trim();
 
-            log.info("weather : " + temp);
-            log.info("summary : " + summary);
+        String loc = CmmUtil.nvl(location.next().text()).trim();
+        String temp = CmmUtil.nvl(weatherTemp.next().text()).trim();
+        String summary = CmmUtil.nvl(weatherSummary.next().text()).trim();
 
-            pDTO.setTemp(temp.substring(5, temp.length()));
-            pDTO.setSummary(summary);
+        log.info("location : " + loc);
+        log.info("weather : " + temp);
+        log.info("summary : " + summary);
 
-            log.info("temp : " + pDTO.toString());
+        pDTO.setLoc(loc);
+        pDTO.setTemp(temp.substring(5, temp.length()));
+        pDTO.setSummary(summary);
 
-            pList1.add(pDTO);
-        }
+        log.info("temp : " + pDTO.toString());
+
+        pList1.add(pDTO);
 
         log.info(this.getClass().getName() + ".getweatherTemp End!");
 
@@ -68,35 +71,47 @@ public class WeatherService implements IWeatherService {
 
         String url = "https://weather.naver.com/";
 
+
         Document doc = null;
 
+        //Jsoup은 동적 페이지는 크롤링하지 못한다
+        //동적페이지를 크롤링하고 싶다면 selenium을 사용해보자
         doc = Jsoup.connect(url).get();
 
-        Elements elements = doc.select("div.weather_table_wrap");
 
-        Iterator<Element> Itime = elements.select("#_idHourly-2023101211 span").iterator();
-        Iterator<Element> IweatherTime = elements.select("table tbody tr:nth-child(1) > td div svg g g.bb-chart g.bb-chart-texts g g text.bb-shape.bb-shape-2.bb-text.bb-text-2").iterator();
+        // 원래 css query : "ul.week_list._cnWeeklyFcastList"
+        Elements elements = doc.select("ul.week_list");
 
         WeatherDTO pDTO = null;
 
         List<WeatherDTO> pList2 = new ArrayList<>();
 
-        pDTO = new WeatherDTO();
+        Iterator<Element> li = elements.select("li").iterator();
 
-        while (Itime.hasNext()) {
-            String time = CmmUtil.nvl(Itime.next().text()).trim();
-            String weatherTime = CmmUtil.nvl(IweatherTime.next().text()).trim();
+        while (li.hasNext()) {
+            pDTO = new WeatherDTO();
 
-            log.info("time : " + time);
-            log.info("weatherTime : " + weatherTime);
+            String list = CmmUtil.nvl(li.next().text()).trim();
 
+            String al[] = list.split(" ");
+            for(String a : al) {
+                log.info(a);
+            }
+            pDTO.setTime(al[0].substring(2, al[0].length()));
+            pDTO.setAmRain(al[2]);
+            pDTO.setAmWeather(al[3]);
+            pDTO.setPmRain(al[6]);
+            pDTO.setPmWeather(al[4]);
+            pDTO.setHighTemp(al[7]);
+            pDTO.setLowTemp(al[9]);
 
-            pDTO.setTime(time);
-            pDTO.setTimeWeather(weatherTime);
-
-            log.info("temp : " + pDTO.toString());
-
+            log.info("pDTO : " + pDTO.toString());
             pList2.add(pDTO);
+        }
+
+        for (WeatherDTO dto :
+                pList2) {
+            log.info("dto in List : \n" + dto.toString());
         }
 
         log.info(this.getClass().getName() + ".getweatherTemp End!");
