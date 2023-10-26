@@ -1,9 +1,7 @@
 package kopo.poly.service.impl;
 
 import kopo.poly.dto.MailDTO;
-import kopo.poly.dto.NoticeDTO;
 import kopo.poly.persistance.mapper.IMailMapper;
-import kopo.poly.persistance.mapper.INoticeMapper;
 import kopo.poly.service.IMailService;
 import kopo.poly.util.CmmUtil;
 import lombok.RequiredArgsConstructor;
