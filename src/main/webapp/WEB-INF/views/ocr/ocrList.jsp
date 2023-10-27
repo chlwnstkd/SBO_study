@@ -6,7 +6,9 @@
 <%@ page import="kopo.poly.dto.OcrDTO" %>
 <%
     List<OcrDTO> rList = (List<OcrDTO>) request.getAttribute("rList");
+
 %>
+
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -15,26 +17,35 @@
     <link rel="stylesheet" href="/css/table.css"/>
     <script type="text/javascript" src="/js/jquery-3.6.0.min.js"></script>
     <script type="text/javascript">
-        $(document).ready(function () {
-            $("#download").on("click", function () { // 버튼 클릭했을때, 발생되는 이벤트 생성함(onclick 이벤트와 동일함)
-                var filenameDiv = document.getElementById('filename');
-                var filepathDiv = document.getElementById('filepath');
-                var filename = filenameDiv.innerHTML;
-                var filepath = filepathDiv.innerHTML;
-                console.log(filename);
-                console.log(filepath);
-                $.ajax({
-                    url: "/ocr/ocrDownload",
-                    type: "post", // 전송방식은 Post
-                    dataType: "JSON", // 전송 결과는 JSON으로 받기
-                    data: {"filename" : filename,
-                        "filepath" : filepath}, // form 태그 내 input 등 객체를 자동으로 전송할 형태로 변경하기
-                    success: function () { // 호출이 성공했다면..
-                        alert("다운로드 성공")
-                    }
-                })
-            })
-        })
+
+        // $(document).ready(function () {
+        //     $("#download").on("click", function () { // 버튼 클릭했을때, 발생되는 이벤트 생성함(onclick 이벤트와 동일함)
+        //         var filenameDiv = document.getElementById('filename');
+        //         var filepathDiv = document.getElementById('filepath');
+        //         var filename = filenameDiv.innerHTML;
+        //         var filepath = filepathDiv.innerHTML;
+        //         console.log(filename);
+        //         console.log(filepath);
+        //         $.ajax({
+        //             url: "/ocr/download?fileName=",
+        //             type: "get", // 전송방식은 Post
+        //             dataType: "JSON", // 전송 결과는 JSON으로 받기
+        //             data: {"filename" : filename,
+        //                 "filepath" : filepath}, // form 태그 내 input 등 객체를 자동으로 전송할 형태로 변경하기
+        //             success: function () { // 호출이 성공했다면..
+        //                 alert("다운로드 성공")
+        //             }
+        //         })
+        //     })
+        // })
+    </script>
+    <script type="text/javascript">
+
+        //상세보기 이동
+        function doDetail(filename, filepath, orgFileName) {
+            location.href = "/ocr/download?fileName=" + filename + "&filePath=" + filepath +"&orgFileName=" + orgFileName;
+        }
+
     </script>
 </head>
 <body>
@@ -62,10 +73,8 @@
             for (OcrDTO dto : rList) {
         %>
         <div class="divTableRow">
-            <div class="divTableCell">
-                <button type="button" id="download">
-                    다운로드
-                </button>
+            <div class="divTableCell" onclick="doDetail('<%=CmmUtil.nvl(dto.getFileName())%>', '<%=CmmUtil.nvl(dto.getFilePath())%>', '<%=CmmUtil.nvl(dto.getOrgFileName())%>')">
+               다운로드
             </div>
             <div class="divTableCell"><%=CmmUtil.nvl(dto.getSeq())%>
             </div>
