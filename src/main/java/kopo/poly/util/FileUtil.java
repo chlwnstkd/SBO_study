@@ -1,6 +1,5 @@
 package kopo.poly.util;
 
-
 import java.io.File;
 
 public class FileUtil {
